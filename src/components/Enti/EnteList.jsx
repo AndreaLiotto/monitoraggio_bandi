@@ -5,7 +5,7 @@ import ConfirmDialog from '../Shared/ConfirmDialog';
 import EnteForm from './EnteForm';
 
 export default function EnteList() {
-  const { enti, loading, deleteEnte } = useEnti();
+  const { enti, loading, deleteEnte, fetchEnti } = useEnti();
   const [deleteId, setDeleteId] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [editingEnte, setEditingEnte] = useState(null);
@@ -22,9 +22,11 @@ export default function EnteList() {
     setShowForm(true);
   }
 
-  function handleFormSuccess() {
+  async function handleFormSuccess() {
     setShowForm(false);
     setEditingEnte(null);
+    // IMPORTANTE: ricarica la lista dopo creazione/modifica
+    await fetchEnti();
   }
 
   function handleCancel() {

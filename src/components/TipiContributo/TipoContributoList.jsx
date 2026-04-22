@@ -6,7 +6,7 @@ import ConfirmDialog from '../Shared/ConfirmDialog';
 import TipoContributoForm from './TipoContributoForm';
 
 export default function TipoContributoList() {
-  const { tipi, loading, deleteTipo } = useTipiContributo();
+  const { tipi, loading, deleteTipo, fetchTipi } = useTipiContributo();
   const [deleteId, setDeleteId] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [editingTipo, setEditingTipo] = useState(null);
@@ -23,9 +23,11 @@ export default function TipoContributoList() {
     setShowForm(true);
   }
 
-  function handleFormSuccess() {
+  async function handleFormSuccess() {
     setShowForm(false);
     setEditingTipo(null);
+    // IMPORTANTE: ricarica la lista dopo creazione/modifica
+    await fetchTipi();
   }
 
   function handleCancel() {
