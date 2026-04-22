@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { useBandi } from '../../hooks/useBandi';
 import { useEnti } from '../../hooks/useEnti';
 import { useTipiContributo } from '../../hooks/useTipiContributo';
+import { useClienti } from '../../hooks/useClienti';
 
 export default function BandoForm() {
   const { id } = useParams();
@@ -13,8 +14,13 @@ export default function BandoForm() {
   const { createBando, updateBando, getBandoById } = useBandi();
   const { enti } = useEnti();
   const { tipi } = useTipiContributo();
+  const { clienti } = useClienti();
   
-  const { register, handleSubmit, reset, formState: { errors } } = useForm();
+  const { register, handleSubmit, reset, formState: { errors } } = useForm({
+    defaultValues: {
+      stato: 'bozza' // Default stato
+    }
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -60,6 +66,7 @@ export default function BandoForm() {
       )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="bg-white rounded-lg shadow p-6 space-y-6">
+        {/* TITOLO */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Titolo *
@@ -67,12 +74,14 @@ export default function BandoForm() {
           <input
             {...register('titolo', { required: 'Il titolo è obbligatorio' })}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
+            placeholder="es. PMI GIOVANILI 2024"
           />
           {errors.titolo && (
             <p className="text-red-500 text-sm mt-1">{errors.titolo.message}</p>
           )}
         </div>
 
+        {/* ENTE EROGATORE + TIPO CONTRIBUTO */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -111,39 +120,128 @@ export default function BandoForm() {
           </div>
         </div>
 
+        {/* CLIENTE + INCARICATO */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Scadenza Domanda
+              Cliente
             </label>
-            <input
-              type="date"
-              {...register('scadenza_domanda')}
+            <select
+              {...register('cliente_id')}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
-            />
+            >
+              <option value="">Nessun cliente associato</option>
+              {clienti.map(cliente => (
+                <option key={cliente.id} value={cliente.id}>{cliente.ragione_sociale}</option>
+              ))}
+            </select>
+            <p className="text-xs text-gray-500 mt-1">
+              Il cliente può essere associato anche successivamente dalla sezione Spese
+            </p>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Scadenza Rendicontazione
+              Incaricato
             </label>
             <input
-              type="date"
-              {...register('scadenza_rendicontazione')}
+              {...register('incaricato')}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
+              placeholder="es. Mario Rossi"
             />
+            <p className="text-xs text-gray-500 mt-1">
+              Nome della persona che gestisce questo bando
+            </p>
           </div>
         </div>
 
+        {/* SCADENZE */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Codice Bando
+              Scadenza Domanda *
             </label>
             <input
-              {...register('codice_bando')}
+              type="date"
+              {...register('scadenza_domanda', { required: 'La scadenza domanda è obbligatoria' })}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
             />
+            {errors.scadenza_domanda && (
+              <p className="text-red-500 text-sm mt-1">{errors.scadenza_domanda.message}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Scadenza Rendicontazione *
+            </label>
+            <input
+              type="date"
+              {...register('scadenza_rendicontazione', { required: 'La scadenza rendicontazione è obbligatoria' })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
+            />
+            {errors.scadenza_rendicontazione && (
+              <p className="text-red-500 text-sm mt-1">{errors.scadenza_rendicontazione.message}</p>
+            )}
+          </div>
+        </div>
+
+        {/* CODICE BANDO + TEMPISTICA */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Codice Bando *
+            </label>
+            <input
+              {...register('codice_bando', { required: 'Il codice bando è obbligatorio' })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
+              placeholder="es. PMI-GIO-2024"
+            />
+            {errors.codice_bando && (
+              <p className="text-red-500 text-sm mt-1">{errors.codice_bando.message}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Tempistica Erogazione (giorni) *
+            </label>
+            <input
+              type="number"
+              {...register('tempistica_erogazione_giorni', { 
+                required: 'La tempistica è obbligatoria',
+                min: { value: 1, message: 'Minimo 1 giorno' }
+              })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
+              placeholder="es. 90"
+            />
+            {errors.tempistica_erogazione_giorni && (
+              <p className="text-red-500 text-sm mt-1">{errors.tempistica_erogazione_giorni.message}</p>
+            )}
+          </div>
+        </div>
+
+        {/* LINK DECRETO + STATO */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Link Decreto/Bando *
+            </label>
+            <input
+              type="url"
+              {...register('link_decreto', { 
+                required: 'Il link al decreto è obbligatorio',
+                pattern: {
+                  value: /^https?:\/\/.+/,
+                  message: 'Inserisci un URL valido (http:// o https://)'
+                }
+              })}
+              placeholder="https://esempio.it/decreto.pdf"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
+            />
+            {errors.link_decreto && (
+              <p className="text-red-500 text-sm mt-1">{errors.link_decreto.message}</p>
+            )}
           </div>
 
           <div>
@@ -162,32 +260,13 @@ export default function BandoForm() {
               <option value="erogato">Erogato</option>
               <option value="chiuso">Chiuso</option>
             </select>
+            <p className="text-xs text-gray-500 mt-1">
+              Default: Bozza
+            </p>
           </div>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Link Decreto/Bando
-          </label>
-          <input
-            type="url"
-            {...register('link_decreto')}
-            placeholder="https://..."
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Tempistica Erogazione (giorni)
-          </label>
-          <input
-            type="number"
-            {...register('tempistica_erogazione_giorni')}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
-          />
-        </div>
-
+        {/* NOTE GENERALI */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Note Generali
@@ -196,10 +275,12 @@ export default function BandoForm() {
             {...register('note_generali')}
             rows="4"
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
+            placeholder="Note aggiuntive sul bando..."
           ></textarea>
         </div>
 
-        <div className="flex justify-end space-x-3">
+        {/* BOTTONI */}
+        <div className="flex justify-end space-x-3 pt-4 border-t">
           <button
             type="button"
             onClick={() => navigate('/bandi')}
@@ -212,7 +293,7 @@ export default function BandoForm() {
             disabled={loading}
             className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 disabled:opacity-50"
           >
-            {loading ? 'Salvataggio...' : (isEdit ? 'Aggiorna' : 'Crea Bando')}
+            {loading ? 'Salvataggio...' : (isEdit ? 'Aggiorna Bando' : 'Crea Bando')}
           </button>
         </div>
       </form>

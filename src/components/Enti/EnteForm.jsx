@@ -57,39 +57,60 @@ export default function EnteForm({ ente, onSuccess, onCancel }) {
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Sito Web
+            Sito Web *
           </label>
           <input
             type="url"
-            {...register('sito_web')}
+            {...register('sito_web', {
+              required: 'Il sito web è obbligatorio',
+              pattern: {
+                value: /^https?:\/\/.+/,
+                message: 'Inserisci un URL valido (http:// o https://)'
+              }
+            })}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
             placeholder="https://www.esempio.it"
           />
+          {errors.sito_web && (
+            <p className="text-red-500 text-sm mt-1">{errors.sito_web.message}</p>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Email Contatto
+              Email Contatto *
             </label>
             <input
               type="email"
-              {...register('email_contatto')}
+              {...register('email_contatto', {
+                required: "L'email di contatto è obbligatoria",
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message: 'Email non valida'
+                }
+              })}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
               placeholder="info@esempio.it"
             />
+            {errors.email_contatto && (
+              <p className="text-red-500 text-sm mt-1">{errors.email_contatto.message}</p>
+            )}
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Telefono
+              Telefono *
             </label>
             <input
               type="tel"
-              {...register('telefono')}
+              {...register('telefono', { required: 'Il telefono è obbligatorio' })}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
               placeholder="041 123 4567"
             />
+            {errors.telefono && (
+              <p className="text-red-500 text-sm mt-1">{errors.telefono.message}</p>
+            )}
           </div>
         </div>
 

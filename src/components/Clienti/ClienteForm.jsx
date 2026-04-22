@@ -68,11 +68,12 @@ export default function ClienteForm() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Partita IVA
+              Partita IVA *
             </label>
             <input
               {...register('partita_iva', {
-                validate: value => !value || validatePartitaIva(value) || 'P.IVA non valida (11 cifre)'
+                required: 'La Partita IVA è obbligatoria',
+                validate: value => validatePartitaIva(value) || 'P.IVA non valida (11 cifre)'
               })}
               maxLength="11"
               placeholder="12345678901"
@@ -85,11 +86,12 @@ export default function ClienteForm() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Codice Fiscale
+              Codice Fiscale *
             </label>
             <input
               {...register('codice_fiscale', {
-                validate: value => !value || validateCodiceFiscale(value) || 'CF non valido (16 caratteri)'
+                required: 'Il Codice Fiscale è obbligatorio',
+                validate: value => validateCodiceFiscale(value) || 'CF non valido (16 caratteri)'
               })}
               maxLength="16"
               placeholder="RSSMRA80A01H501U"
@@ -107,35 +109,53 @@ export default function ClienteForm() {
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Nome Referente
+                Nome Referente *
               </label>
               <input
-                {...register('referente_nome')}
+                {...register('referente_nome', { required: 'Il nome del referente è obbligatorio' })}
+                placeholder="es. Mario Rossi"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
               />
+              {errors.referente_nome && (
+                <p className="text-red-500 text-sm mt-1">{errors.referente_nome.message}</p>
+              )}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email Referente
+                  Email Referente *
                 </label>
                 <input
                   type="email"
-                  {...register('referente_email')}
+                  {...register('referente_email', {
+                    required: "L'email del referente è obbligatoria",
+                    pattern: {
+                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                      message: 'Email non valida'
+                    }
+                  })}
+                  placeholder="mario.rossi@esempio.it"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
                 />
+                {errors.referente_email && (
+                  <p className="text-red-500 text-sm mt-1">{errors.referente_email.message}</p>
+                )}
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Telefono Referente
+                  Telefono Referente *
                 </label>
                 <input
                   type="tel"
-                  {...register('referente_telefono')}
+                  {...register('referente_telefono', { required: 'Il telefono del referente è obbligatorio' })}
+                  placeholder="041 123 4567"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
                 />
+                {errors.referente_telefono && (
+                  <p className="text-red-500 text-sm mt-1">{errors.referente_telefono.message}</p>
+                )}
               </div>
             </div>
           </div>
@@ -143,13 +163,17 @@ export default function ClienteForm() {
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Indirizzo
+            Indirizzo *
           </label>
           <textarea
-            {...register('indirizzo')}
+            {...register('indirizzo', { required: "L'indirizzo è obbligatorio" })}
             rows="2"
+            placeholder="Via Roma 123, 30100 Venezia VE"
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
           ></textarea>
+          {errors.indirizzo && (
+            <p className="text-red-500 text-sm mt-1">{errors.indirizzo.message}</p>
+          )}
         </div>
 
         <div>
