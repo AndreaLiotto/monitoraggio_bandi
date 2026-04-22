@@ -2,14 +2,29 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/Shared/Layout';
 import Dashboard from './pages/Dashboard';
+import BandoList from './components/Bandi/BandoList';
+import BandoForm from './components/Bandi/BandoForm';
+import BandoDetail from './components/Bandi/BandoDetail';
+import ClienteList from './components/Clienti/ClienteList';
+import ClienteForm from './components/Clienti/ClienteForm';
+import EnteList from './components/Enti/EnteList';
+import TipoContributoList from './components/TipiContributo/TipoContributoList';
 
 function App() {
   return (
     <Router>
       <Layout>
         <Routes>
-          <route path="/" element={<Dashboard />} />
-          {/* Altre route verranno aggiunte man mano */}
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/bandi" element={<BandoList />} />
+          <Route path="/bandi/nuovo" element={<BandoForm />} />
+          <Route path="/bandi/:id" element={<BandoDetail />} />
+          <Route path="/bandi/:id/modifica" element={<BandoForm />} />
+          <Route path="/clienti" element={<ClienteList />} />
+          <Route path="/clienti/nuovo" element={<ClienteForm />} />
+          <Route path="/clienti/:id/modifica" element={<ClienteForm />} />
+          <Route path="/enti" element={<EnteList />} />
+          <Route path="/tipi-contributo" element={<TipoContributoList />} />
         </Routes>
       </Layout>
     </Router>
