@@ -21,17 +21,17 @@ export function useBandiClienti() {
             id,
             titolo,
             codice_bando,
-            stato,
             scadenza_domanda,
-            importo_totale_concesso,
-            incaricato,
+            scadenza_rendicontazione,
+            link_decreto,
             enti_erogatori!ente_erogatore_id(nome)
           ),
           clienti!cliente_id(
             id,
             ragione_sociale,
-            partita_iva,
-            referente_nome
+            referente_nome,
+            referente_email,
+            referente_telefono
           )
         `)
         .order('created_at', { ascending: false });
@@ -47,9 +47,19 @@ export function useBandiClienti() {
 
   async function createBandoCliente(newRelation) {
     try {
+      const payload = {
+        bando_id: newRelation.bando_id,
+        cliente_id: newRelation.cliente_id,
+        incaricato: newRelation.incaricato,
+        importo_richiesto: newRelation.importo_richiesto,
+        stato: 'bozza',
+        importo_concesso: 0,
+        storico: newRelation.storico || null,
+        note_aggiuntive: newRelation.note_aggiuntive || null,
+      };
       const { data, error } = await supabase
         .from('bandi_clienti')
-        .insert([newRelation])
+        .insert([payload])
         .select()
         .single();
 
