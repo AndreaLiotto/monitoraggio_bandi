@@ -1,8 +1,10 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 export default function Navbar() {
   const location = useLocation();
+  const { user, signOut } = useAuth();
 
   const navLinks = [
     { path: '/', label: 'Dashboard' },
@@ -36,6 +38,19 @@ export default function Navbar() {
                 </Link>
               ))}
             </div>
+          </div>
+
+          {/* Utente + Logout */}
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-gray-500 hidden md:block">
+              {user?.email}
+            </span>
+            <button
+              onClick={signOut}
+              className="text-sm text-gray-600 hover:text-red-600 px-3 py-1.5 rounded-md border border-gray-200 hover:border-red-300 transition-colors"
+            >
+              Esci
+            </button>
           </div>
         </div>
       </div>
