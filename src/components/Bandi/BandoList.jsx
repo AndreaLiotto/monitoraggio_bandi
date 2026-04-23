@@ -54,6 +54,12 @@ export default function BandoList() {
                 Titolo
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Cliente
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Incaricato
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Ente
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -73,7 +79,7 @@ export default function BandoList() {
           <tbody className="bg-white divide-y divide-gray-200">
             {bandiFiltrati.length === 0 ? (
               <tr>
-                <td colSpan="6" className="px-6 py-4 text-center text-gray-500">
+                <td colSpan="8" className="px-6 py-4 text-center text-gray-500">
                   Nessun bando trovato
                 </td>
               </tr>
@@ -89,6 +95,12 @@ export default function BandoList() {
                       {bando.codice_bando && (
                         <p className="text-sm text-gray-500">{bando.codice_bando}</p>
                       )}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-900">
+                      {bando.cliente?.ragione_sociale || '-'}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-900">
+                      {bando.incaricato || '-'}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-900">
                       {bando.ente_erogatore?.nome || '-'}

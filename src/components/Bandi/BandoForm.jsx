@@ -124,34 +124,34 @@ export default function BandoForm() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Cliente
+              Cliente *
             </label>
             <select
-              {...register('cliente_id')}
+              {...register('cliente_id', { required: 'Seleziona un cliente' })}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
             >
-              <option value="">Nessun cliente associato</option>
+              <option value="">Seleziona cliente...</option>
               {clienti.map(cliente => (
                 <option key={cliente.id} value={cliente.id}>{cliente.ragione_sociale}</option>
               ))}
             </select>
-            <p className="text-xs text-gray-500 mt-1">
-              Il cliente può essere associato anche successivamente dalla sezione Spese
-            </p>
+            {errors.cliente_id && (
+              <p className="text-red-500 text-sm mt-1">{errors.cliente_id.message}</p>
+            )}
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Incaricato
+              Incaricato *
             </label>
             <input
-              {...register('incaricato')}
+              {...register('incaricato', { required: "L'incaricato è obbligatorio" })}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
               placeholder="es. Mario Rossi"
             />
-            <p className="text-xs text-gray-500 mt-1">
-              Nome della persona che gestisce questo bando
-            </p>
+            {errors.incaricato && (
+              <p className="text-red-500 text-sm mt-1">{errors.incaricato.message}</p>
+            )}
           </div>
         </div>
 
@@ -246,22 +246,28 @@ export default function BandoForm() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Stato
+              Stato {!isEdit && '(Bozza)'}
             </label>
-            <select
-              {...register('stato')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
-            >
-              <option value="bozza">Bozza</option>
-              <option value="presentato">Presentato</option>
-              <option value="in_valutazione">In Valutazione</option>
-              <option value="approvato">Approvato</option>
-              <option value="respinto">Respinto</option>
-              <option value="erogato">Erogato</option>
-              <option value="chiuso">Chiuso</option>
-            </select>
+            {isEdit ? (
+              <select
+                {...register('stato')}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
+              >
+                <option value="bozza">Bozza</option>
+                <option value="presentato">Presentato</option>
+                <option value="in_valutazione">In Valutazione</option>
+                <option value="approvato">Approvato</option>
+                <option value="respinto">Respinto</option>
+                <option value="erogato">Erogato</option>
+                <option value="chiuso">Chiuso</option>
+              </select>
+            ) : (
+              <div className="w-full px-3 py-2 border border-gray-200 rounded-md bg-gray-50 text-gray-600">
+                Bozza
+              </div>
+            )}
             <p className="text-xs text-gray-500 mt-1">
-              Default: Bozza
+              {isEdit ? 'Modifica lo stato del bando' : 'I nuovi bandi vengono creati in stato "Bozza"'}
             </p>
           </div>
         </div>
