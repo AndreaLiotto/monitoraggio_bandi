@@ -36,11 +36,10 @@ export function useClienti() {
         .single();
 
       if (error) throw error;
-      if (data) {
-        setClienti([...clienti, data].sort((a, b) => 
-          a.ragione_sociale.localeCompare(b.ragione_sociale)
-        ));
-      }
+      
+      // Refresh completo della lista (include count bandi)
+      await fetchClienti();
+      
       return { data, error: null };
     } catch (err) {
       return { data: null, error: err.message };
@@ -57,9 +56,10 @@ export function useClienti() {
         .single();
 
       if (error) throw error;
-      if (data) {
-        setClienti(clienti.map(c => c.id === id ? data : c));
-      }
+      
+      // Refresh completo della lista (include count bandi)
+      await fetchClienti();
+      
       return { data, error: null };
     } catch (err) {
       return { data: null, error: err.message };
