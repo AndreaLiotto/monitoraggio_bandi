@@ -9,6 +9,7 @@ import ClienteList from './components/Clienti/ClienteList';
 import ClienteForm from './components/Clienti/ClienteForm';
 import EnteList from './components/Enti/EnteList';
 import TipoContributoList from './components/TipiContributo/TipoContributoList';
+import BandiAttiviList from './components/BandiAttivi/BandiAttiviList';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path="/bandi/nuovo" element={<BandoForm />} />
           <Route path="/bandi/:id" element={<BandoDetail />} />
           <Route path="/bandi/:id/modifica" element={<BandoForm />} />
+          <Route path="/bandi-attivi" element={<BandiAttiviList />} />
           <Route path="/clienti" element={<ClienteList />} />
           <Route path="/clienti/nuovo" element={<ClienteForm />} />
           <Route path="/clienti/:id/modifica" element={<ClienteForm />} />

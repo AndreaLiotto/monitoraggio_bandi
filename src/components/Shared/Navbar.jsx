@@ -7,6 +7,7 @@ export default function Navbar() {
   const navLinks = [
     { path: '/', label: 'Dashboard' },
     { path: '/bandi', label: 'Bandi' },
+    { path: '/bandi-attivi', label: 'Bandi Attivi' },
     { path: '/clienti', label: 'Clienti' },
     { path: '/enti', label: 'Enti Erogatori' },
     { path: '/tipi-contributo', label: 'Tipi Contributo' },
