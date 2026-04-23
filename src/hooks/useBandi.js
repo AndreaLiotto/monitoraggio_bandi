@@ -19,7 +19,7 @@ export function useBandi() {
           *,
           ente_erogatore:enti_erogatori(nome),
           tipo_contributo:tipi_contributo(nome),
-          cliente:clienti(id, ragione_sociale)
+          cliente:clienti!cliente_id(id, ragione_sociale)
         `)
         .order('created_at', { ascending: false });
 
@@ -41,7 +41,7 @@ export function useBandi() {
           *,
           ente_erogatore:enti_erogatori(nome),
           tipo_contributo:tipi_contributo(nome),
-          cliente:clienti(id, ragione_sociale)
+          cliente:clienti!cliente_id(id, ragione_sociale)
         `)
         .single();
 
@@ -65,7 +65,7 @@ export function useBandi() {
           *,
           ente_erogatore:enti_erogatori(nome),
           tipo_contributo:tipi_contributo(nome),
-          cliente:clienti(id, ragione_sociale)
+          cliente:clienti!cliente_id(id, ragione_sociale)
         `)
         .single();
 
@@ -102,7 +102,7 @@ export function useBandi() {
           *,
           ente_erogatore:enti_erogatori(*),
           tipo_contributo:tipi_contributo(*),
-          cliente:clienti(id, ragione_sociale)
+          cliente:clienti!cliente_id(id, ragione_sociale)
         `)
         .eq('id', id)
         .single();
