@@ -19,7 +19,6 @@ export default function BandoClienteForm({ item, onSuccess, onCancel }) {
   const { bandi } = useBandi();
   const { clienti } = useClienti();
   const isEdit = !!item;
-  const listsLoading = bandiLoading || clientiLoading;
 
   const { register, handleSubmit, formState: { errors } } = useForm({
     defaultValues: isEdit ? {
