@@ -6,12 +6,12 @@ import LoadingSpinner from '../Shared/LoadingSpinner';
 import ConfirmDialog from '../Shared/ConfirmDialog';
 
 export default function BandoList() {
-  const { bandi, loading, deleteBando } = useBandi();
+  const { bandi, loading, error } = useBandi();
   const [deleteId, setDeleteId] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
   const bandiFiltrati = bandi.filter(b => 
-    b.titolo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    b.titolo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     b.codice_bando?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -23,6 +23,31 @@ export default function BandoList() {
   }
 
   if (loading) return <LoadingSpinner />;
+
+  if (error) {
+    return (
+      <div className="max-w-4xl mx-auto mt-8">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+          <h2 className="text-lg font-semibold text-red-800 mb-2">
+            ⚠️ Errore nel caricamento dei bandi
+          </h2>
+          <p className="text-red-700 mb-4">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+          >
+            Ricarica Pagina
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  console.log('🔍 BandoList render:', {
+    totalBandi: bandi.length,
+    bandiFiltrati: bandiFiltrati.length,
+    searchTerm
+  });
 
   return (
     <div>
@@ -54,9 +79,6 @@ export default function BandoList() {
                 Titolo
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Cliente
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Incaricato
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -79,7 +101,7 @@ export default function BandoList() {
           <tbody className="bg-white divide-y divide-gray-200">
             {bandiFiltrati.length === 0 ? (
               <tr>
-                <td colSpan="8" className="px-6 py-4 text-center text-gray-500">
+                <td colSpan="7" className="px-6 py-4 text-center text-gray-500">
                   Nessun bando trovato
                 </td>
               </tr>
@@ -95,9 +117,6 @@ export default function BandoList() {
                       {bando.codice_bando && (
                         <p className="text-sm text-gray-500">{bando.codice_bando}</p>
                       )}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">
-                      {bando.cliente?.ragione_sociale || '-'}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-900">
                       {bando.incaricato || '-'}

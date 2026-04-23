@@ -18,19 +18,17 @@ export function useBandi() {
         .select(`
           *,
           enti_erogatori!ente_erogatore_id(nome),
-          tipi_contributo!tipo_contributo_id(nome),
-          clienti!cliente_id(id, ragione_sociale)
+          tipi_contributo!tipo_contributo_id(nome)
         `)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
       
-      // Rinomina i campi per retrocompatibilità con il componente
+      // Rinomina per retrocompatibilità
       const bandiConAlias = (data || []).map(bando => ({
         ...bando,
         ente_erogatore: bando.enti_erogatori,
-        tipo_contributo: bando.tipi_contributo,
-        cliente: bando.clienti
+        tipo_contributo: bando.tipi_contributo
       }));
       
       setBandi(bandiConAlias);
@@ -50,10 +48,7 @@ export function useBandi() {
         .single();
 
       if (error) throw error;
-      
-      // Refresh completo della lista con tutti i join
       await fetchBandi();
-      
       return { data, error: null };
     } catch (err) {
       return { data: null, error: err.message };
@@ -70,10 +65,7 @@ export function useBandi() {
         .single();
 
       if (error) throw error;
-      
-      // Refresh completo della lista con tutti i join
       await fetchBandi();
-      
       return { data, error: null };
     } catch (err) {
       return { data: null, error: err.message };
@@ -102,20 +94,17 @@ export function useBandi() {
         .select(`
           *,
           enti_erogatori!ente_erogatore_id(*),
-          tipi_contributo!tipo_contributo_id(*),
-          clienti!cliente_id(id, ragione_sociale)
+          tipi_contributo!tipo_contributo_id(*)
         `)
         .eq('id', id)
         .single();
 
       if (error) throw error;
       
-      // Rinomina per retrocompatibilità
       const bandoConAlias = {
         ...data,
         ente_erogatore: data.enti_erogatori,
-        tipo_contributo: data.tipi_contributo,
-        cliente: data.clienti
+        tipo_contributo: data.tipi_contributo
       };
       
       return { data: bandoConAlias, error: null };

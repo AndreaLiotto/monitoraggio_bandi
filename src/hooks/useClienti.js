@@ -15,7 +15,7 @@ export function useClienti() {
       setLoading(true);
       const { data, error } = await supabase
         .from('clienti')
-        .select('*, bandi!cliente_id(count)')
+        .select('*')
         .order('ragione_sociale', { ascending: true });
 
       if (error) throw error;
@@ -36,10 +36,7 @@ export function useClienti() {
         .single();
 
       if (error) throw error;
-      
-      // Refresh completo della lista (include count bandi)
       await fetchClienti();
-      
       return { data, error: null };
     } catch (err) {
       return { data: null, error: err.message };
@@ -56,10 +53,7 @@ export function useClienti() {
         .single();
 
       if (error) throw error;
-      
-      // Refresh completo della lista (include count bandi)
       await fetchClienti();
-      
       return { data, error: null };
     } catch (err) {
       return { data: null, error: err.message };

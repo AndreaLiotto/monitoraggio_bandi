@@ -4,7 +4,6 @@ import { useForm } from 'react-hook-form';
 import { useBandi } from '../../hooks/useBandi';
 import { useEnti } from '../../hooks/useEnti';
 import { useTipiContributo } from '../../hooks/useTipiContributo';
-import { useClienti } from '../../hooks/useClienti';
 
 export default function BandoForm() {
   const { id } = useParams();
@@ -14,7 +13,6 @@ export default function BandoForm() {
   const { createBando, updateBando, getBandoById } = useBandi();
   const { enti } = useEnti();
   const { tipi } = useTipiContributo();
-  const { clienti } = useClienti();
   
   const { register, handleSubmit, reset, formState: { errors } } = useForm({
     defaultValues: {
@@ -120,39 +118,22 @@ export default function BandoForm() {
           </div>
         </div>
 
-        {/* CLIENTE + INCARICATO */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Cliente *
-            </label>
-            <select
-              {...register('cliente_id', { required: 'Seleziona un cliente' })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
-            >
-              <option value="">Seleziona cliente...</option>
-              {clienti.map(cliente => (
-                <option key={cliente.id} value={cliente.id}>{cliente.ragione_sociale}</option>
-              ))}
-            </select>
-            {errors.cliente_id && (
-              <p className="text-red-500 text-sm mt-1">{errors.cliente_id.message}</p>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Incaricato *
-            </label>
-            <input
-              {...register('incaricato', { required: "L'incaricato è obbligatorio" })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
-              placeholder="es. Mario Rossi"
-            />
-            {errors.incaricato && (
-              <p className="text-red-500 text-sm mt-1">{errors.incaricato.message}</p>
-            )}
-          </div>
+        {/* INCARICATO */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Incaricato *
+          </label>
+          <input
+            {...register('incaricato', { required: "L'incaricato è obbligatorio" })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
+            placeholder="es. Mario Rossi"
+          />
+          {errors.incaricato && (
+            <p className="text-red-500 text-sm mt-1">{errors.incaricato.message}</p>
+          )}
+          <p className="text-xs text-gray-500 mt-1">
+            Nome della persona che gestisce questo bando
+          </p>
         </div>
 
         {/* SCADENZE */}
