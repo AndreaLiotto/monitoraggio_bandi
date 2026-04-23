@@ -11,42 +11,48 @@ export default function KPICards() {
     scadenzeImminenti: 0,
   });
 
-  useEffect(() => {
-    loadKPIs();
-  }, []);
+  useEffect(() => { loadKPIs(); }, []);
 
   async function loadKPIs() {
     try {
+      // Totale bandi e scadenze dalla tabella bandi
       const { data: bandi } = await supabase
         .from('bandi')
-        .select('stato, importo_totale_concesso, scadenza_domanda');
+        .select('scadenza_domanda');
 
-      if (bandi) {
-        const totaleBandi = bandi.length;
-        const bandiAttivi = bandi.filter(b => 
-          ['presentato', 'in_valutazione', 'approvato'].includes(b.stato)
-        ).length;
-        const importoConcesso = bandi.reduce((sum, b) => sum + (b.importo_totale_concesso || 0), 0);
-        
-        const oggi = new Date();
-        const scadenzeImminenti = bandi.filter(b => {
-          if (!b.scadenza_domanda) return false;
-          const giorni = differenceInDays(parseISO(b.scadenza_domanda), oggi);
-          return giorni >= 0 && giorni <= 14;
-        }).length;
+      // Stato e importi dalla tabella bandi_clienti
+      const { data: bandiClienti } = await supabase
+        .from('bandi_clienti')
+        .select('stato, importo_concesso');
 
-        setKpis({ totaleBandi, bandiAttivi, importoConcesso, scadenzeImminenti });
-      }
+      const totaleBandi = bandi?.length || 0;
+
+      const bandiAttivi = (bandiClienti || []).filter(bc =>
+        ['presentato', 'concesso', 'in_attesa_di_documentazione'].includes(bc.stato)
+      ).length;
+
+      const importoConcesso = (bandiClienti || []).reduce(
+        (sum, bc) => sum + (bc.importo_concesso || 0), 0
+      );
+
+      const oggi = new Date();
+      const scadenzeImminenti = (bandi || []).filter(b => {
+        if (!b.scadenza_domanda) return false;
+        const giorni = differenceInDays(parseISO(b.scadenza_domanda), oggi);
+        return giorni >= 0 && giorni <= 14;
+      }).length;
+
+      setKpis({ totaleBandi, bandiAttivi, importoConcesso, scadenzeImminenti });
     } catch (error) {
       console.error('Errore caricamento KPI:', error);
     }
   }
 
   const cards = [
-    { label: 'Bandi Totali', value: kpis.totaleBandi, icon: '📋', color: 'bg-blue-500' },
-    { label: 'Bandi Attivi', value: kpis.bandiAttivi, icon: '✅', color: 'bg-green-500' },
-    { label: 'Importo Concesso', value: formatCurrency(kpis.importoConcesso), icon: '💰', color: 'bg-yellow-500' },
-    { label: 'Scadenze Imminenti', value: kpis.scadenzeImminenti, icon: '⏰', color: 'bg-red-500' },
+    { label: 'Bandi Totali',        value: kpis.totaleBandi,                  icon: '📋', color: 'bg-blue-500' },
+    { label: 'Bandi Attivi',        value: kpis.bandiAttivi,                  icon: '✅', color: 'bg-green-500' },
+    { label: 'Importo Concesso',    value: formatCurrency(kpis.importoConcesso), icon: '💰', color: 'bg-yellow-500' },
+    { label: 'Scadenze Imminenti',  value: kpis.scadenzeImminenti,            icon: '⏰', color: 'bg-red-500' },
   ];
 
   return (

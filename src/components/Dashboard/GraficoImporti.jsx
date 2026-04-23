@@ -10,42 +10,36 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 export default function GraficoImporti() {
   const [chartData, setChartData] = useState(null);
 
-  useEffect(() => {
-    loadChartData();
-  }, []);
+  useEffect(() => { loadChartData(); }, []);
 
   async function loadChartData() {
     try {
-      const { data: bandi } = await supabase
-        .from('bandi')
-        .select('importo_totale_concesso, created_at')
-        .not('importo_totale_concesso', 'is', null);
+      // Legge importo_concesso da bandi_clienti (non più da bandi)
+      const { data } = await supabase
+        .from('bandi_clienti')
+        .select('importo_concesso, created_at')
+        .gt('importo_concesso', 0);
 
-      if (bandi && bandi.length > 0) {
+      if (data && data.length > 0) {
         const importiPerMese = {};
-        
-        bandi.forEach(bando => {
-          const mese = format(parseISO(bando.created_at), 'MMM yyyy', { locale: it });
-          if (!importiPerMese[mese]) {
-            importiPerMese[mese] = 0;
-          }
-          importiPerMese[mese] += bando.importo_totale_concesso;
+
+        data.forEach(bc => {
+          const mese = format(parseISO(bc.created_at), 'MMM yyyy', { locale: it });
+          importiPerMese[mese] = (importiPerMese[mese] || 0) + bc.importo_concesso;
         });
 
         const labels = Object.keys(importiPerMese).slice(-6);
-        const data = labels.map(label => importiPerMese[label]);
+        const values = labels.map(l => importiPerMese[l]);
 
         setChartData({
           labels,
-          datasets: [
-            {
-              label: 'Importo Concesso (€)',
-              data,
-              backgroundColor: 'rgba(59, 130, 246, 0.5)',
-              borderColor: 'rgb(59, 130, 246)',
-              borderWidth: 1,
-            },
-          ],
+          datasets: [{
+            label: 'Importo Concesso (€)',
+            data: values,
+            backgroundColor: 'rgba(59, 130, 246, 0.5)',
+            borderColor: 'rgb(59, 130, 246)',
+            borderWidth: 1,
+          }],
         });
       }
     } catch (error) {
@@ -56,27 +50,24 @@ export default function GraficoImporti() {
   const options = {
     responsive: true,
     plugins: {
-      legend: {
-        position: 'top',
-      },
-      title: {
-        display: true,
-        text: 'Importi Concessi per Mese',
-      },
+      legend: { position: 'top' },
+      title: { display: true, text: 'Importi Concessi per Mese' },
     },
     scales: {
       y: {
         beginAtZero: true,
         ticks: {
-          callback: function(value) {
-            return '€ ' + value.toLocaleString('it-IT');
-          }
+          callback: (value) => '€ ' + value.toLocaleString('it-IT')
         }
       }
     }
   };
 
-  if (!chartData) return <div>Caricamento grafico...</div>;
+  if (!chartData) return (
+    <div className="bg-white rounded-lg shadow p-6 mt-8 text-center text-gray-500">
+      Nessun importo concesso da visualizzare
+    </div>
+  );
 
   return (
     <div className="bg-white rounded-lg shadow p-6 mt-8">

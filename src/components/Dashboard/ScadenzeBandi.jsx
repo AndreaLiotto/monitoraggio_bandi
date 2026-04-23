@@ -8,18 +8,17 @@ export default function ScadenzeBandi() {
   const [scadenze, setScadenze] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadScadenze();
-  }, []);
+  useEffect(() => { loadScadenze(); }, []);
 
   async function loadScadenze() {
     try {
       const oggi = new Date();
       const tra30giorni = addDays(oggi, 30);
 
+      // Rimuovere 'stato' dalla query — non è più su bandi
       const { data } = await supabase
         .from('bandi')
-        .select('id, titolo, scadenza_domanda, stato')
+        .select('id, titolo, scadenza_domanda')
         .gte('scadenza_domanda', oggi.toISOString().split('T')[0])
         .lte('scadenza_domanda', tra30giorni.toISOString().split('T')[0])
         .order('scadenza_domanda', { ascending: true })
@@ -38,7 +37,7 @@ export default function ScadenzeBandi() {
   return (
     <div className="bg-white rounded-lg shadow p-6">
       <h2 className="text-xl font-bold mb-4">📅 Prossime Scadenze (30 giorni)</h2>
-      
+
       {scadenze.length === 0 ? (
         <p className="text-gray-500">Nessuna scadenza imminente</p>
       ) : (
@@ -46,7 +45,7 @@ export default function ScadenzeBandi() {
           {scadenze.map(bando => {
             const status = getScadenzaStatus(bando.scadenza_domanda);
             const giorni = differenceInDays(parseISO(bando.scadenza_domanda), new Date());
-            
+
             return (
               <Link
                 key={bando.id}
@@ -68,7 +67,7 @@ export default function ScadenzeBandi() {
                     status === 'warning' ? 'bg-yellow-100 text-yellow-700' :
                     'bg-green-100 text-green-700'
                   }`}>
-                    {bando.stato}
+                    {giorni <= 7 ? '🔴 Urgente' : giorni <= 14 ? '🟡 Imminente' : '🟢 OK'}
                   </span>
                 </div>
               </Link>
