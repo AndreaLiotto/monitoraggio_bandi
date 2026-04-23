@@ -170,6 +170,8 @@ export default function BandiAttiviList() {
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Importo Richiesto</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stato</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Importo Concesso</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Storico</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Note Aggiuntive</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Azioni</th>
               </tr>
             </thead>
@@ -228,6 +230,16 @@ export default function BandiAttiviList() {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-gray-900">{formatCurrency(item.importo_concesso)}</td>
+                  <td className="px-4 py-3 text-gray-700 max-w-xs">
+                    {item.storico ? (
+                      <span className="block truncate" title={item.storico}>{item.storico}</span>
+                    ) : '-'}
+                  </td>
+                  <td className="px-4 py-3 text-gray-700 max-w-xs">
+                    {item.note_aggiuntive ? (
+                      <span className="block truncate" title={item.note_aggiuntive}>{item.note_aggiuntive}</span>
+                    ) : '-'}
+                  </td>
                   <td className="px-4 py-3 space-x-2">
                     <button onClick={() => handleEdit(item)} className="text-blue-600 hover:text-blue-800">✏️</button>
                     <button onClick={() => setDeleteItem(item)} className="text-red-600 hover:text-red-800">🗑️</button>

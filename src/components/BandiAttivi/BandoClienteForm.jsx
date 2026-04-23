@@ -196,17 +196,6 @@ export default function BandoClienteForm({ item, onSuccess, onCancel }) {
           />
         </div>
 
-        {/* FILE PRESENTATI */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            File Presentati
-          </label>
-          <div className="border-2 border-dashed border-gray-300 rounded-md px-6 py-4 text-center text-gray-500 text-sm">
-            <p>📎 Funzionalità upload file — disponibile tramite Supabase Storage</p>
-            <p className="text-xs mt-1 text-gray-400">Per ora inserisci i link ai file nel campo Storico</p>
-          </div>
-        </div>
-
         {/* NOTE AGGIUNTIVE */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">Note Aggiuntive</label>
