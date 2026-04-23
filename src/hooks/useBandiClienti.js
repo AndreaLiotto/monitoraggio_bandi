@@ -64,7 +64,6 @@ export function useBandiClienti() {
         .single();
 
       if (error) throw error;
-      await fetchBandiClienti();
       return { data, error: null };
     } catch (err) {
       return { data: null, error: err.message };
@@ -82,7 +81,6 @@ export function useBandiClienti() {
         .single();
 
       if (error) throw error;
-      await fetchBandiClienti();
       return { data, error: null };
     } catch (err) {
       return { data: null, error: err.message };

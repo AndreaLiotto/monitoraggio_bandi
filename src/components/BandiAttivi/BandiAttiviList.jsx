@@ -26,7 +26,7 @@ const STATO_LABEL = {
 };
 
 export default function BandiAttiviList() {
-  const { bandiClienti, loading, deleteBandoCliente } = useBandiClienti();
+  const { bandiClienti, loading, deleteBandoCliente, fetchBandiClienti } = useBandiClienti();
   const [deleteItem, setDeleteItem] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
@@ -63,6 +63,7 @@ export default function BandiAttiviList() {
   }
 
   function handleFormSuccess() {
+    fetchBandiClienti();
     setShowForm(false);
     setEditingItem(null);
   }

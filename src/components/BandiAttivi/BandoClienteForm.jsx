@@ -16,8 +16,8 @@ const STATI = [
 
 export default function BandoClienteForm({ item, onSuccess, onCancel }) {
   const { createBandoCliente, updateBandoCliente } = useBandiClienti();
-  const { bandi, loading: bandiLoading } = useBandi();
-  const { clienti, loading: clientiLoading } = useClienti();
+  const { bandi } = useBandi();
+  const { clienti } = useClienti();
   const isEdit = !!item;
   const listsLoading = bandiLoading || clientiLoading;
 
