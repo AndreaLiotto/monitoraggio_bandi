@@ -15,7 +15,7 @@ export function useClienti() {
       setLoading(true);
       const { data, error } = await supabase
         .from('clienti')
-        .select('*, bandi:bandi!cliente_id(count)')
+        .select('*, bandi!cliente_id(count)')
         .order('ragione_sociale', { ascending: true });
 
       if (error) throw error;

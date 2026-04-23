@@ -17,14 +17,23 @@ export function useBandi() {
         .from('bandi')
         .select(`
           *,
-          ente_erogatore:enti_erogatori(nome),
-          tipo_contributo:tipi_contributo(nome),
-          cliente:clienti!cliente_id(id, ragione_sociale)
+          enti_erogatori!ente_erogatore_id(nome),
+          tipi_contributo!tipo_contributo_id(nome),
+          clienti!cliente_id(id, ragione_sociale)
         `)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setBandi(data || []);
+      
+      // Rinomina i campi per retrocompatibilità con il componente
+      const bandiConAlias = (data || []).map(bando => ({
+        ...bando,
+        ente_erogatore: bando.enti_erogatori,
+        tipo_contributo: bando.tipi_contributo,
+        cliente: bando.clienti
+      }));
+      
+      setBandi(bandiConAlias);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -37,18 +46,14 @@ export function useBandi() {
       const { data, error } = await supabase
         .from('bandi')
         .insert([newBando])
-        .select(`
-          *,
-          ente_erogatore:enti_erogatori(nome),
-          tipo_contributo:tipi_contributo(nome),
-          cliente:clienti!cliente_id(id, ragione_sociale)
-        `)
+        .select()
         .single();
 
       if (error) throw error;
-      if (data) {
-        setBandi([data, ...bandi]);
-      }
+      
+      // Refresh completo della lista con tutti i join
+      await fetchBandi();
+      
       return { data, error: null };
     } catch (err) {
       return { data: null, error: err.message };
@@ -61,18 +66,14 @@ export function useBandi() {
         .from('bandi')
         .update(updates)
         .eq('id', id)
-        .select(`
-          *,
-          ente_erogatore:enti_erogatori(nome),
-          tipo_contributo:tipi_contributo(nome),
-          cliente:clienti!cliente_id(id, ragione_sociale)
-        `)
+        .select()
         .single();
 
       if (error) throw error;
-      if (data) {
-        setBandi(bandi.map(b => b.id === id ? data : b));
-      }
+      
+      // Refresh completo della lista con tutti i join
+      await fetchBandi();
+      
       return { data, error: null };
     } catch (err) {
       return { data: null, error: err.message };
@@ -100,15 +101,24 @@ export function useBandi() {
         .from('bandi')
         .select(`
           *,
-          ente_erogatore:enti_erogatori(*),
-          tipo_contributo:tipi_contributo(*),
-          cliente:clienti!cliente_id(id, ragione_sociale)
+          enti_erogatori!ente_erogatore_id(*),
+          tipi_contributo!tipo_contributo_id(*),
+          clienti!cliente_id(id, ragione_sociale)
         `)
         .eq('id', id)
         .single();
 
       if (error) throw error;
-      return { data, error: null };
+      
+      // Rinomina per retrocompatibilità
+      const bandoConAlias = {
+        ...data,
+        ente_erogatore: data.enti_erogatori,
+        tipo_contributo: data.tipi_contributo,
+        cliente: data.clienti
+      };
+      
+      return { data: bandoConAlias, error: null };
     } catch (err) {
       return { data: null, error: err.message };
     }
