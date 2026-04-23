@@ -16,9 +16,10 @@ const STATI = [
 
 export default function BandoClienteForm({ item, onSuccess, onCancel }) {
   const { createBandoCliente, updateBandoCliente } = useBandiClienti();
-  const { bandi } = useBandi();
-  const { clienti } = useClienti();
+  const { bandi, loading: bandiLoading } = useBandi();
+  const { clienti, loading: clientiLoading } = useClienti();
   const isEdit = !!item;
+  const listsLoading = bandiLoading || clientiLoading;
 
   const { register, handleSubmit, formState: { errors } } = useForm({
     defaultValues: isEdit ? {
@@ -84,34 +85,49 @@ export default function BandoClienteForm({ item, onSuccess, onCancel }) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Bando *</label>
-            <select
-              {...register('bando_id', { required: 'Seleziona un bando' })}
-              disabled={isEdit}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 disabled:bg-gray-100"
-            >
-              <option value="">Seleziona bando...</option>
-              {bandi.map(b => (
-                <option key={b.id} value={b.id}>
-                  {b.titolo}{b.codice_bando ? ` (${b.codice_bando})` : ''}
-                </option>
-              ))}
-            </select>
-            {errors.bando_id && <p className="text-red-500 text-sm mt-1">{errors.bando_id.message}</p>}
+            {isEdit ? (
+              <div className="w-full px-3 py-2 border border-gray-200 rounded-md bg-gray-50 text-gray-700">
+                {item.bandi?.titolo || item.bando_id}
+                {item.bandi?.codice_bando && <span className="text-gray-400 ml-1">({item.bandi.codice_bando})</span>}
+              </div>
+            ) : (
+              <>
+                <select
+                  {...register('bando_id', { required: 'Seleziona un bando' })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
+                >
+                  <option value="">Seleziona bando...</option>
+                  {bandi.map(b => (
+                    <option key={b.id} value={b.id}>
+                      {b.titolo}{b.codice_bando ? ` (${b.codice_bando})` : ''}
+                    </option>
+                  ))}
+                </select>
+                {errors.bando_id && <p className="text-red-500 text-sm mt-1">{errors.bando_id.message}</p>}
+              </>
+            )}
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Cliente *</label>
-            <select
-              {...register('cliente_id', { required: 'Seleziona un cliente' })}
-              disabled={isEdit}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 disabled:bg-gray-100"
-            >
-              <option value="">Seleziona cliente...</option>
-              {clienti.map(c => (
-                <option key={c.id} value={c.id}>{c.ragione_sociale}</option>
-              ))}
-            </select>
-            {errors.cliente_id && <p className="text-red-500 text-sm mt-1">{errors.cliente_id.message}</p>}
+            {isEdit ? (
+              <div className="w-full px-3 py-2 border border-gray-200 rounded-md bg-gray-50 text-gray-700">
+                {item.clienti?.ragione_sociale || item.cliente_id}
+              </div>
+            ) : (
+              <>
+                <select
+                  {...register('cliente_id', { required: 'Seleziona un cliente' })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500"
+                >
+                  <option value="">Seleziona cliente...</option>
+                  {clienti.map(c => (
+                    <option key={c.id} value={c.id}>{c.ragione_sociale}</option>
+                  ))}
+                </select>
+                {errors.cliente_id && <p className="text-red-500 text-sm mt-1">{errors.cliente_id.message}</p>}
+              </>
+            )}
           </div>
         </div>
 
